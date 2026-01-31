@@ -11,38 +11,42 @@ st.set_page_config(page_title="Agenda de Violão", page_icon="🎸", layout="cen
 # --- ESTILIZAÇÃO (CSS) ---
 
 # --- ESTILIZAÇÃO (CSS) ---
+# --- ESTILIZAÇÃO (CSS) ---
 st.markdown(
     f"""
     <style>
-    /* Esconde apenas o botão de Deploy e o link do GitHub */
+    /* 1. Oculta o botão de Deploy (canto superior direito) */
     .stDeployButton {{
         display: none !important;
     }}
-    .viewerBadge_container__1QSob {{
-        display: none !important;
-    }}
+
+    /* 2. Oculta o ícone do GitHub e links de repositório */
     #MainMenu {{
         visibility: hidden;
     }}
     
-    /* Mantém o botão da Sidebar visível, mas esconde a barra decorativa superior */
-    header[data-testid="stHeader"] {{
-        background: rgba(0,0,0,0);
+    footer {{
+        visibility: hidden;
     }}
 
-    /* Mantém a sua imagem de fundo */
+    /* 3. Garante que o Header (onde fica o menu) seja clicável e visível */
+    header[data-testid="stHeader"] {{
+        background-color: rgba(0,0,0,0) !important;
+        color: white !important;
+    }}
+
+    /* Mantém sua imagem de fundo */
     .stApp {{
         background-image: url("https://images.unsplash.com/photo-1550985543-f47f38aee65e?q=80&w=1500");
         background-attachment: fixed;
         background-size: cover;
     }}
     
-    /* Caixa branca para o formulário */
+    /* Estilo do formulário */
     [data-testid="stForm"] {{
         background-color: rgba(255, 255, 255, 0.9);
         padding: 30px;
         border-radius: 15px;
-        border: none;
     }}
     </style>
     """,

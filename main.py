@@ -8,7 +8,7 @@ st.set_page_config(page_title="Agenda de Violão", page_icon="🎸")
 
 # --- 1. CONFIGURAÇÕES (AJUSTE AQUI) ---
 # Substitua pelo seu ID do SheetDB
-SHEETDB_API_URL = "https://sheetdb.io/api/v1/SEU_ID_AQUI"
+SHEETDB_API_URL = "https://sheetdb.io/api/v1/l8lb0csbymhga"
 # Seu WhatsApp com DDD (apenas números)
 SEU_CELULAR = "5511999999999" 
 # Senha para o Painel do Professor

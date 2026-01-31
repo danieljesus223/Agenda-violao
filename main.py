@@ -9,13 +9,26 @@ st.set_page_config(page_title="Agenda de Violão", page_icon="🎸", layout="cen
 # --- ESTILIZAÇÃO (CSS) ---
 # Aqui adicionamos a imagem de fundo e deixamos os campos mais bonitos
 # --- ESTILIZAÇÃO (CSS) ---
+
+# --- ESTILIZAÇÃO (CSS) ---
 st.markdown(
     f"""
     <style>
-    /* Esconde o menu do Streamlit (Hambúrguer) e o link do GitHub */
-    #MainMenu {{visibility: hidden;}}
-    header {{visibility: hidden;}}
-    footer {{visibility: hidden;}}
+    /* Esconde apenas o botão de Deploy e o link do GitHub */
+    .stDeployButton {{
+        display: none !important;
+    }}
+    .viewerBadge_container__1QSob {{
+        display: none !important;
+    }}
+    #MainMenu {{
+        visibility: hidden;
+    }}
+    
+    /* Mantém o botão da Sidebar visível, mas esconde a barra decorativa superior */
+    header[data-testid="stHeader"] {{
+        background: rgba(0,0,0,0);
+    }}
 
     /* Mantém a sua imagem de fundo */
     .stApp {{
@@ -24,7 +37,7 @@ st.markdown(
         background-size: cover;
     }}
     
-    /* Caixa branca semi-transparente para o formulário */
+    /* Caixa branca para o formulário */
     [data-testid="stForm"] {{
         background-color: rgba(255, 255, 255, 0.9);
         padding: 30px;

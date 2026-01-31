@@ -6,13 +6,13 @@ import pandas as pd
 st.set_page_config(page_title="Agenda de Violão", page_icon="🎸")
 
 # --- CONFIGURAÇÕES ---
-# Verifique se o seu ID está correto aqui!
-SHEETDB_API_URL = "https://sheetdb.io/api/v1/l8lb0csbymhga"
-SEU_CELULAR = "55439955-3253"
+SHEETDB_API_URL = "https://sheetdb.io/api/v1/SEU_ID_AQUI"
+SEU_CELULAR = "5511999999999" 
 SENHA_ADMIN = "1234"
 
 menu = st.sidebar.selectbox("Navegação", ["Agendar Aula", "Painel do Professor"])
 
+# --- TELA 1: AGENDAMENTO ---
 if menu == "Agendar Aula":
     st.title("🎸 Agende sua Aula")
     
@@ -28,7 +28,6 @@ if menu == "Agendar Aula":
             st.warning("Coloque seu nome.")
         else:
             data_br = data.strftime('%d/%m/%Y')
-            # Garantimos que a hora seja tratada como texto puro
             hora_texto = str(horario)
             
             with st.spinner('Verificando...'):
@@ -39,7 +38,6 @@ if menu == "Agendar Aula":
                         agenda = res_check.json()
                         if isinstance(agenda, list):
                             for aula in agenda:
-                                # Limpa qualquer símbolo estranho para comparar
                                 d_plan = str(aula.get('data')).replace("'", "")
                                 h_plan = str(aula.get('hora')).replace("'", "")
                                 if d_plan == data_br and h_plan == hora_texto:
@@ -49,7 +47,6 @@ if menu == "Agendar Aula":
                     if ocupado:
                         st.error("Horário já ocupado!")
                     else:
-                        # Enviamos com o apóstrofo (') para "travar" como texto no Google
                         payload = {"data": [{
                             "aluno": nome, 
                             "data": f"'{data_br}", 
@@ -59,31 +56,33 @@ if menu == "Agendar Aula":
                         requests.post(SHEETDB_API_URL, json=payload)
                         st.success("Agendado!")
                         
-                        link = f"https://wa.me/{SEU_CELULAR}?text=Agendei para {data_br} às {hora_texto}"
-                        st.markdown(f'[📱 Avisar no WhatsApp]({link})')
+                        msg = f"Oi! Agendei para {data_br} às {hora_texto}"
+                        link = f"https://wa.me/{SEU_CELULAR}?text={urllib.parse.quote(msg)}"
+                        st.markdown(f'''<a href="{link}" target="_blank"><button style="background-color: #25D366; color: white; border: none; padding: 10px; border-radius: 5px; width: 100%; cursor: pointer;">📱 Avisar Professor</button></a>''', unsafe_allow_html=True)
                 except:
                     st.error("Erro na conexão.")
 
-                    elif menu == "Painel do Professor":
+# --- TELA 2: ADMIN ---
+elif menu == "Painel do Professor":
     st.title("📅 Gestão de Aulas")
-    senha = st.text_input("Senha:", type="password")
+    senha = st.text_input("Senha de acesso:", type="password")
+    
     if senha == SENHA_ADMIN:
-        if st.button("Ver Agenda"):
+        if st.button("Atualizar Lista"):
             res = requests.get(SHEETDB_API_URL)
             if res.status_code == 200:
                 dados = res.json()
                 if dados:
-                    # Transformamos em DataFrame
                     df = pd.DataFrame(dados)
-                    
-                    # LIMPEZA: Remove apóstrofos de todas as colunas de texto
+                    # Limpando apóstrofos de todas as colunas existentes
                     for col in df.columns:
                         df[col] = df[col].astype(str).str.replace("'", "")
                     
-                    st.write("Dados recebidos da planilha:")
-                    # st.dataframe mostra tudo o que existir na planilha
+                    st.write("Agendamentos encontrados:")
                     st.dataframe(df, use_container_width=True)
                 else:
-                    st.info("A planilha parece estar vazia.")
+                    st.info("Nenhuma aula agendada ainda.")
             else:
-                st.error("Erro ao conectar com o SheetDB. Verifique o ID.")
+                st.error("Erro ao buscar dados.")
+    elif senha != "":
+        st.error("Senha incorreta!")

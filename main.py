@@ -64,8 +64,8 @@ if menu == "Agendar Aula":
                 except:
                     st.error("Erro na conexão.")
 
-elif menu == "Painel do Professor":
-    st.title("📅 Suas Aulas")
+            elif menu == "Painel do Professor":
+    st.title("📅 Gestão de Aulas")
     senha = st.text_input("Senha:", type="password")
     if senha == SENHA_ADMIN:
         if st.button("Ver Agenda"):
@@ -73,9 +73,17 @@ elif menu == "Painel do Professor":
             if res.status_code == 200:
                 dados = res.json()
                 if dados:
+                    # Transformamos em DataFrame
                     df = pd.DataFrame(dados)
-                    # Forçamos a limpeza visual dos apóstrofos na tabela
-                    for col in ['data', 'hora']:
-                        if col in df.columns:
-                            df[col] = df[col].astype(str).str.replace("'", "")
-                    st.table(df)
+                    
+                    # LIMPEZA: Remove apóstrofos de todas as colunas de texto
+                    for col in df.columns:
+                        df[col] = df[col].astype(str).str.replace("'", "")
+                    
+                    st.write("Dados recebidos da planilha:")
+                    # st.dataframe mostra tudo o que existir na planilha
+                    st.dataframe(df, use_container_width=True)
+                else:
+                    st.info("A planilha parece estar vazia.")
+            else:
+                st.error("Erro ao conectar com o SheetDB. Verifique o ID.")

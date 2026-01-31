@@ -5,30 +5,34 @@ import pandas as pd
 
 st.set_page_config(page_title="Agenda de Violão", page_icon="🎸")
 
-# --- CONFIGURAÇÕES ---
-SHEETDB_API_URL = "https://sheetdb.io/api/v1/l8lb0csbymhga"
+# --- 1. CONFIGURAÇÕES (COLOQUE SEUS DADOS AQUI) ---
+SHEETDB_API_URL = "https://sheetdb.io/api/v1/SEU_ID_AQUI"
 SEU_CELULAR = "5511999999999" 
-SENHA_ADMIN = "1234"
+SENHA_MESTRE = "1234" # Senha para você acessar a lista de alunos
 
-menu = st.sidebar.selectbox("Navegação", ["Agendar Aula", "Painel do Professor"])
+# Inicializa o estado de login do professor
+if 'professor_logado' not in st.session_state:
+    st.session_state['professor_logado'] = False
 
-# --- TELA 1: AGENDAMENTO ---
+# Menu Lateral
+menu = st.sidebar.selectbox("Escolha uma opção", ["Agendar Aula", "Painel do Professor"])
+
+# --- TELA 1: AGENDAMENTO (PARA O ALUNO) ---
 if menu == "Agendar Aula":
-    st.title("🎸 Agende sua Aula")
-    
+    st.title("🎸 Agende sua Aula de Violão")
+    st.write("Escolha seu horário e estilo preferido abaixo.")
+
     with st.form(key="form_aula", clear_on_submit=True):
-        nome = st.text_input("Seu Nome:")
-        # O format="DD/MM/YYYY" muda a exibição para o usuário
-        data = st.date_input("Dia:", format="DD/MM/YYYY")
-        horario = st.selectbox("Horário:", ["08:00", "09:00", "10:00", "11:00", "14:00", "15:00", "16:00"])
-        estilo = st.selectbox("Estilo:", ["Violão", "Guitarra"])
-        submit = st.form_submit_button("Reservar")
+        nome = st.text_input("Seu Nome Completo:")
+        data = st.date_input("Escolha o Dia:", format="DD/MM/YYYY")
+        horario = st.selectbox("Escolha o Horário:", ["08:00", "09:00", "10:00", "11:00", "14:00", "15:00", "16:00", "17:00"])
+        estilo = st.selectbox("O que quer aprender?", ["Violão Iniciante", "Violão Intermediário", "Guitarra", "Fingerstyle"])
+        submit = st.form_submit_button("Confirmar Reserva")
 
     if submit:
         if not nome:
-            st.warning("Coloque seu nome.")
+            st.warning("Por favor, digite seu nome.")
         else:
-            # Criamos a data formatada para exibição e salvamento
             data_br = data.strftime('%d/%m/%Y')
             hora_texto = str(horario)
             
@@ -49,42 +53,46 @@ if menu == "Agendar Aula":
                     if ocupado:
                         st.error(f"❌ O horário {hora_texto} no dia {data_br} já está ocupado.")
                     else:
-                        payload = {"data": [{
-                            "aluno": nome, 
-                            "data": f"'{data_br}", 
-                            "hora": f"'{hora_texto}", 
-                            "estilo": estilo
-                        }]}
+                        # Salva com apóstrofo para garantir formato texto no Sheets
+                        payload = {"data": [{"aluno": nome, "data": f"'{data_br}", "hora": f"'{hora_texto}", "estilo": estilo}]}
                         requests.post(SHEETDB_API_URL, json=payload)
                         
-                        # Aqui o usuário vê a data certa na mensagem de sucesso
                         st.success(f"✅ Agendado para {data_br} às {hora_texto}!")
                         st.balloons()
                         
                         msg = f"Oi! Agendei minha aula de {estilo} para o dia {data_br} às {hora_texto}."
                         link = f"https://wa.me/{SEU_CELULAR}?text={urllib.parse.quote(msg)}"
-                        st.markdown(f'''<a href="{link}" target="_blank"><button style="background-color: #25D366; color: white; border: none; padding: 10px; border-radius: 5px; width: 100%; cursor: pointer; font-weight: bold;">📱 Avisar Professor no WhatsApp</button></a>''', unsafe_allow_html=True)
+                        st.markdown(f'''<a href="{link}" target="_blank"><button style="background-color: #25D366; color: white; border: none; padding: 12px; border-radius: 8px; width: 100%; cursor: pointer; font-weight: bold;">📱 Avisar Professor no WhatsApp</button></a>''', unsafe_allow_html=True)
                 except:
-                    st.error("Erro na conexão com a agenda.")
+                    st.error("Erro ao conectar. Tente novamente.")
 
-# --- TELA 2: ADMIN ---
+# --- TELA 2: PAINEL DO PROFESSOR (COM SENHA) ---
 elif menu == "Painel do Professor":
-    st.title("📅 Gestão de Aulas")
-    senha = st.text_input("Senha de acesso:", type="password")
-    
-    if senha == SENHA_ADMIN:
-        if st.button("Atualizar Lista"):
+    st.title("🔐 Área Restrita")
+
+    if not st.session_state['professor_logado']:
+        senha_input = st.text_input("Digite a senha de professor:", type="password")
+        if st.button("Acessar Painel"):
+            if senha_input == SENHA_MESTRE:
+                st.session_state['professor_logado'] = True
+                st.rerun()
+            else:
+                st.error("Senha incorreta!")
+    else:
+        st.sidebar.button("Sair/Deslogar", on_click=lambda: st.session_state.update({'professor_logado': False}))
+        st.success("Acesso autorizado.")
+        
+        if st.button("🔄 Atualizar Lista de Alunos"):
             res = requests.get(SHEETDB_API_URL)
             if res.status_code == 200:
                 dados = res.json()
                 if dados:
                     df = pd.DataFrame(dados)
+                    # Limpa os dados para exibição
                     for col in df.columns:
                         df[col] = df[col].astype(str).str.replace("'", "")
                     
-                    st.write("Agendamentos:")
+                    st.write("### Lista de Agendamentos:")
                     st.dataframe(df, use_container_width=True)
                 else:
-                    st.info("Nenhuma aula agendada ainda.")
-    elif senha != "":
-        st.error("Senha incorreta!")
+                    st.info("Ainda não há agendamentos na planilha.")

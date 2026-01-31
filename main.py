@@ -5,7 +5,7 @@ import urllib.parse
 st.set_page_config(page_title="Agenda Violão", page_icon="🎸")
 
 # --- CONFIGURAÇÃO ---
-SHEETDB_API_URL = "https://sheetdb.io/api/v1/SEU_ID_AQUI"
+SHEETDB_API_URL = "https://sheetdb.io/api/v1/l8lb0csbymhga"
 SEU_CELULAR = "5511999999999"
 
 st.title("🎸 Agende sua Aula")

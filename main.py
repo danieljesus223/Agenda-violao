@@ -7,7 +7,7 @@ import pandas as pd
 st.set_page_config(page_title="Agenda de Violão", page_icon="🎸")
 
 # --- 1. CONFIGURAÇÕES (AJUSTE AQUI) ---
-SHEETDB_API_URL = "https://sheetdb.io/api/v1/SEU_ID_AQUI"
+SHEETDB_API_URL = "https://sheetdb.io/api/v1/l8lb0csbymhga"
 SEU_CELULAR = "5511999999999" 
 SENHA_ADMIN = "1234"
 

@@ -13,25 +13,26 @@ st.set_page_config(page_title="Agenda de Violão", page_icon="🎸", layout="cen
 # --- ESTILIZAÇÃO (CSS) ---
 # --- ESTILIZAÇÃO (CSS) ---
 # --- ESTILIZAÇÃO (CSS) ---
+
+# --- ESTILIZAÇÃO (CSS) ---
 st.markdown(
     f"""
     <style>
-    /* 1. Remove o botão de Deploy e o badge do GitHub */
+    /* 1. Oculta o botão de 'Deploy' que linka ao GitHub */
     .stDeployButton {{
         display: none !important;
     }}
-    .st-emotion-cache-12fmjuu {{
+
+    /* 2. Oculta as opções de 'View Source', 'Report a Bug' e o GitHub no menu */
+    #MainMenu ul li:nth-child(2), 
+    #MainMenu ul li:nth-child(3),
+    #MainMenu ul li:nth-child(4) {{
         display: none !important;
     }}
-    
-    /* 2. Remove o menu da direita (Hambúrguer de opções extras) */
-    #MainMenu {{
-        visibility: hidden;
-    }}
 
-    /* 3. Garante que o Sidebar (Menu do Professor) esteja sempre acessível */
-    section[data-testid="stSidebar"] {{
-        background-color: rgba(255, 255, 255, 0.95);
+    /* 3. Remove o badge (selinho) do GitHub no rodapé/topo */
+    .viewerBadge_container__1QSob {{
+        display: none !important;
     }}
 
     /* Mantém sua imagem de fundo */
@@ -41,7 +42,7 @@ st.markdown(
         background-size: cover;
     }}
     
-    /* Melhora a visibilidade do formulário */
+    /* Estilo do formulário para facilitar leitura */
     [data-testid="stForm"] {{
         background-color: rgba(255, 255, 255, 0.9);
         padding: 30px;

@@ -8,7 +8,7 @@ st.image("https://images.unsplash.com/photo-1510915361894-db8b60106cb1?q=80&w=50
 
 # --- CONFIGURAÇÃO ---
 # Verifique se o ID abaixo é o mesmo do seu SheetDB
-SHEETDB_API_URL = "https://sheetdb.io/api/v1/SEU_ID_AQUI"
+SHEETDB_API_URL = "https://sheetdb.io/api/v1/l8lb0csbymhga"
 SEU_CELULAR = "5511999999999" 
 
 st.title("🎸 Agende sua Aula")

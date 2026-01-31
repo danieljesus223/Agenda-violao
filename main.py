@@ -3,6 +3,8 @@ import requests
 import urllib.parse
 
 st.set_page_config(page_title="Agenda Violão", page_icon="🎸")
+st.image("https://images.unsplash.com/photo-1510915361894-db8b60106cb1?q=80&w=500", caption="A música transforma vidas.")
+
 
 # --- CONFIGURAÇÃO ---
 # Verifique se o ID abaixo é o mesmo do seu SheetDB

@@ -7,11 +7,8 @@ import pandas as pd
 st.set_page_config(page_title="Agenda de Violão", page_icon="🎸")
 
 # --- 1. CONFIGURAÇÕES (AJUSTE AQUI) ---
-# Substitua pelo seu ID do SheetDB
-SHEETDB_API_URL = "https://sheetdb.io/api/v1/l8lb0csbymhga"
-# Seu WhatsApp com DDD (apenas números)
+SHEETDB_API_URL = "https://sheetdb.io/api/v1/SEU_ID_AQUI"
 SEU_CELULAR = "5511999999999" 
-# Senha para o Painel do Professor
 SENHA_ADMIN = "1234"
 
 # --- MENU LATERAL ---
@@ -34,12 +31,11 @@ if menu == "Agendar Aula":
         if not nome:
             st.warning("Por favor, preencha seu nome.")
         else:
- # Formata a data para o padrão Brasileiro
+            # Formata a data para o padrão Brasileiro
             data_br = data.strftime('%d/%m/%Y')
             
             with st.spinner('Consultando agenda...'):
                 try:
-                    # Verifica se o horário já existe
                     response_check = requests.get(SHEETDB_API_URL)
                     ocupado = False
                     
@@ -47,17 +43,19 @@ if menu == "Agendar Aula":
                         agenda_atual = response_check.json()
                         if isinstance(agenda_atual, list):
                             for aula in agenda_atual:
-                                if str(aula.get('data')) == data_br and str(aula.get('hora')) == str(horario):
+                                # Comparamos removendo o apóstrofo caso ele venha na leitura
+                                data_planilha = str(aula.get('data')).replace("'", "")
+                                if data_planilha == data_br and str(aula.get('hora')) == str(horario):
                                     ocupado = True
                                     break
                     
                     if ocupado:
                         st.error(f"❌ O horário de {horario} no dia {data_br} já está ocupado. Tente outro!")
                     else:
-                        # Se livre, salva na planilha
+                        # O segredo está no "'" antes da data_br: força o Sheets a ler como TEXTO
                         payload = {"data": [{
                             "aluno": nome, 
-                            "data": data_br, 
+                            "data": f"'{data_br}", 
                             "hora": horario, 
                             "estilo": estilo
                         }]}
@@ -67,7 +65,6 @@ if menu == "Agendar Aula":
                             st.success(f"✅ Sucesso! Aula marcada para {data_br} às {horario}.")
                             st.balloons()
                             
-                            # Link do WhatsApp
                             mensagem = f"Oi! Sou o {nome} e agendei uma aula de {estilo} para o dia {data_br} às {horario}."
                             link_zap = f"https://wa.me/{SEU_CELULAR}?text={urllib.parse.quote(mensagem)}"
                             
@@ -79,14 +76,13 @@ if menu == "Agendar Aula":
                                 </a>
                             ''', unsafe_allow_html=True)
                         else:
-                            st.error("Erro ao salvar agendamento. Verifique a API.")
+                            st.error("Erro ao salvar agendamento.")
                 except Exception as e:
                     st.error(f"Erro de conexão: {e}")
 
 # --- TELA 2: PAINEL DO PROFESSOR ---
 elif menu == "Painel do Professor":
     st.title("📅 Gestão de Aulas")
-    
     senha = st.text_input("Senha de acesso:", type="password")
     
     if senha == SENHA_ADMIN:
@@ -96,11 +92,8 @@ elif menu == "Painel do Professor":
                 dados = res.json()
                 if dados:
                     df = pd.DataFrame(dados)
-                    # Reorganiza as colunas para ficar bonito
+                    # Limpamos o apóstrofo da visualização na tabela do app também
+                    df['data'] = df['data'].str.replace("'", "")
                     st.table(df[["data", "hora", "aluno", "estilo"]])
                 else:
                     st.info("Nenhuma aula agendada ainda.")
-            else:
-                st.error("Erro ao buscar dados.")
-    elif senha != "":
-        st.error("Senha incorreta!")

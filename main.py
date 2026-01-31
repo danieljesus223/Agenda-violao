@@ -31,7 +31,6 @@ if menu == "Agendar Aula":
         if not nome:
             st.warning("Por favor, preencha seu nome.")
         else:
-            # Formata a data para o padrão Brasileiro
             data_br = data.strftime('%d/%m/%Y')
             
             with st.spinner('Consultando agenda...'):
@@ -43,20 +42,21 @@ if menu == "Agendar Aula":
                         agenda_atual = response_check.json()
                         if isinstance(agenda_atual, list):
                             for aula in agenda_atual:
-                                # Comparamos removendo o apóstrofo caso ele venha na leitura
-                                data_planilha = str(aula.get('data')).replace("'", "")
-                                if data_planilha == data_br and str(aula.get('hora')) == str(horario):
+                                # Remove apóstrofos para comparar corretamente
+                                d_planilha = str(aula.get('data')).replace("'", "")
+                                h_planilha = str(aula.get('hora')).replace("'", "")
+                                if d_planilha == data_br and h_planilha == str(horario):
                                     ocupado = True
                                     break
                     
                     if ocupado:
-                        st.error(f"❌ O horário de {horario} no dia {data_br} já está ocupado. Tente outro!")
+                        st.error(f"❌ O horário de {horario} no dia {data_br} já está ocupado.")
                     else:
-                        # O segredo está no "'" antes da data_br: força o Sheets a ler como TEXTO
+                        # O segredo: "'" antes da data e da hora força o formato texto
                         payload = {"data": [{
                             "aluno": nome, 
                             "data": f"'{data_br}", 
-                            "hora": horario, 
+                            "hora": f"'{horario}", 
                             "estilo": estilo
                         }]}
                         res = requests.post(SHEETDB_API_URL, json=payload)
@@ -75,8 +75,6 @@ if menu == "Agendar Aula":
                                     </button>
                                 </a>
                             ''', unsafe_allow_html=True)
-                        else:
-                            st.error("Erro ao salvar agendamento.")
                 except Exception as e:
                     st.error(f"Erro de conexão: {e}")
 
@@ -92,8 +90,9 @@ elif menu == "Painel do Professor":
                 dados = res.json()
                 if dados:
                     df = pd.DataFrame(dados)
-                    # Limpamos o apóstrofo da visualização na tabela do app também
-                    df['data'] = df['data'].str.replace("'", "")
+                    # Limpa os apóstrofos da visualização para a tabela ficar limpa
+                    df['data'] = df['data'].astype(str).str.replace("'", "")
+                    df['hora'] = df['hora'].astype(str).str.replace("'", "")
                     st.table(df[["data", "hora", "aluno", "estilo"]])
                 else:
                     st.info("Nenhuma aula agendada ainda.")

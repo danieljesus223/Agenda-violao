@@ -12,27 +12,26 @@ st.set_page_config(page_title="Agenda de Violão", page_icon="🎸", layout="cen
 
 # --- ESTILIZAÇÃO (CSS) ---
 # --- ESTILIZAÇÃO (CSS) ---
+# --- ESTILIZAÇÃO (CSS) ---
 st.markdown(
     f"""
     <style>
-    /* 1. Oculta o botão de Deploy (canto superior direito) */
+    /* 1. Remove o botão de Deploy e o badge do GitHub */
     .stDeployButton {{
         display: none !important;
     }}
-
-    /* 2. Oculta o ícone do GitHub e links de repositório */
+    .st-emotion-cache-12fmjuu {{
+        display: none !important;
+    }}
+    
+    /* 2. Remove o menu da direita (Hambúrguer de opções extras) */
     #MainMenu {{
         visibility: hidden;
     }}
-    
-    footer {{
-        visibility: hidden;
-    }}
 
-    /* 3. Garante que o Header (onde fica o menu) seja clicável e visível */
-    header[data-testid="stHeader"] {{
-        background-color: rgba(0,0,0,0) !important;
-        color: white !important;
+    /* 3. Garante que o Sidebar (Menu do Professor) esteja sempre acessível */
+    section[data-testid="stSidebar"] {{
+        background-color: rgba(255, 255, 255, 0.95);
     }}
 
     /* Mantém sua imagem de fundo */
@@ -42,7 +41,7 @@ st.markdown(
         background-size: cover;
     }}
     
-    /* Estilo do formulário */
+    /* Melhora a visibilidade do formulário */
     [data-testid="stForm"] {{
         background-color: rgba(255, 255, 255, 0.9);
         padding: 30px;
@@ -52,6 +51,7 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+
 
 # --- CONFIGURAÇÕES DA API (AJUSTE AQUI) ---
 SHEETDB_API_URL = "https://sheetdb.io/api/v1/SEU_ID_AQUI"

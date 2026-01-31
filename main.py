@@ -8,18 +8,28 @@ st.set_page_config(page_title="Agenda de Violão", page_icon="🎸", layout="cen
 
 # --- ESTILIZAÇÃO (CSS) ---
 # Aqui adicionamos a imagem de fundo e deixamos os campos mais bonitos
+# --- ESTILIZAÇÃO (CSS) ---
 st.markdown(
     f"""
     <style>
+    /* Esconde o menu do Streamlit (Hambúrguer) e o link do GitHub */
+    #MainMenu {{visibility: hidden;}}
+    header {{visibility: hidden;}}
+    footer {{visibility: hidden;}}
+
+    /* Mantém a sua imagem de fundo */
     .stApp {{
         background-image: url("https://images.unsplash.com/photo-1550985543-f47f38aee65e?q=80&w=1500");
         background-attachment: fixed;
         background-size: cover;
     }}
-    .css-1r6slb0 {{
+    
+    /* Caixa branca semi-transparente para o formulário */
+    [data-testid="stForm"] {{
         background-color: rgba(255, 255, 255, 0.9);
-        padding: 20px;
+        padding: 30px;
         border-radius: 15px;
+        border: none;
     }}
     </style>
     """,

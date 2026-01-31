@@ -64,7 +64,7 @@ if menu == "Agendar Aula":
                 except:
                     st.error("Erro na conexão.")
 
-            elif menu == "Painel do Professor":
+                    elif menu == "Painel do Professor":
     st.title("📅 Gestão de Aulas")
     senha = st.text_input("Senha:", type="password")
     if senha == SENHA_ADMIN:

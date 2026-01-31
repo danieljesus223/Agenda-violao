@@ -8,7 +8,7 @@ st.set_page_config(page_title="Agenda de Violão", page_icon="🎸")
 # --- CONFIGURAÇÕES ---
 # Verifique se o seu ID está correto aqui!
 SHEETDB_API_URL = "https://sheetdb.io/api/v1/l8lb0csbymhga"
-SEU_CELULAR = "5511999999999" 
+SEU_CELULAR = "55439955-3253"
 SENHA_ADMIN = "1234"
 
 menu = st.sidebar.selectbox("Navegação", ["Agendar Aula", "Painel do Professor"])

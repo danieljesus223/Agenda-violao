@@ -29,21 +29,29 @@ if submit:
                 agenda_atual = response_check.json()
                 
                 # Procura na lista da planilha se já tem a mesma data e hora
-                ocupado = any(
-                    str(aula['data']) == str(data) and str(aula['hora']) == str(horario) 
-                    for aula in agenda_atual
-                )
-                
-                if ocupado:
-                    st.error(f"❌ Poxa, o horário de {horario} no dia {data.strftime('%d/%m')} já foi preenchido. Escolha outro!")
-                else:
-                    # --- PASSO 2: SE ESTIVER LIVRE, SALVA ---
-                    payload = {"data": [{"aluno": nome, "data": str(data), "hora": horario, "estilo": estilo}]}
-                    res = requests.post(SHEETDB_API_URL, json=payload)
-                    
-                    if res.status_code == 201:
-                        st.success("✅ Horário reservado com sucesso!")
-                        
+                # --- PASSO 1: VERIFICAR SE O HORÁRIO JÁ ESTÁ OCUPADO ---
+with st.spinner('Consultando agenda...'):
+    response_check = requests.get(SHEETDB_API_URL)
+    
+    if response_check.status_code == 200:
+        agenda_atual = response_check.json()
+        
+        # Se a planilha tiver dados, verificamos. Se estiver vazia, pulamos.
+        ocupado = False
+        if isinstance(agenda_atual, list) and len(agenda_atual) > 0:
+            for aula in agenda_atual:
+                # O .get() evita o erro KeyError se a coluna sumir
+                d = aula.get('data')
+                h = aula.get('hora')
+                if str(d) == str(data) and str(h) == str(horario):
+                    ocupado = True
+                    break
+        
+        if ocupado:
+            st.error(f"❌ O horário de {horario} no dia {data.strftime('%d/%m')} já está ocupado.")
+        else:
+            # Segue para o código de salvar...
+
                         # Link do WhatsApp
                         texto_zap = f"Oi! Agendei minha aula de {estilo} para {data} às {horario}."
                         link_whatsapp = f"https://wa.me/{SEU_CELULAR}?text={urllib.parse.quote(texto_zap)}"

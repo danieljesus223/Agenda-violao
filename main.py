@@ -34,6 +34,15 @@ if menu == "Agendar Aula":
         if not nome:
             st.warning("Por favor, preencha seu nome.")
         else:
+
+            # Adicione um apóstrofo antes da data para forçar o formato de texto no Sheets
+payload = {"data": [{
+    "aluno": nome, 
+    "data": f"'{data_br}",  # O símbolo ' força o Sheets a ler como texto
+    "hora": horario, 
+    "estilo": estilo
+}]}
+
             # Formata a data para o padrão Brasileiro
             data_br = data.strftime('%d/%m/%Y')
             

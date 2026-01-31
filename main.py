@@ -1,5 +1,4 @@
-                            st.success(f"✅ Reservado para o dia {data_br}!")
-          import streamlit as st
+import streamlit as st
 import requests
 import urllib.parse
 import pandas as pd
@@ -105,9 +104,3 @@ elif menu == "Painel do Professor":
                 st.error("Erro ao buscar dados.")
     elif senha != "":
         st.error("Senha incorreta!")
-                  
-                            # Mensagem do WhatsApp também formatada
-                            texto_zap = f"Oi! Agendei minha aula de {estilo} para o dia {data_br} às {horario}."
-                            link_whatsapp = f"https://wa.me/{SEU_CELULAR}?text={urllib.parse.quote(texto_zap)}"
-                            st.markdown(f'<a href="{link_whatsapp}" target="_blank"><button style="background-color: #25D366; color: white; border: none; padding: 10px; border-radius: 5px; width: 100%; cursor: pointer;">📱 Avisar Professor</button></a>', unsafe_allow_html=True)
-# ... (mantenha o restante do código)
